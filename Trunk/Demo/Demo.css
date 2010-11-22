@@ -1,0 +1,16 @@
+﻿body
+{
+    font-family: Consolas;
+}
+
+.ResultPanel .normal-timing
+{
+    color: Green;
+    font-weight: bold;
+}
+
+.ResultPanel .exceeded-timing
+{
+    color: Red;
+    font-weight: bolder;
+}

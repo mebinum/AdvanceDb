@@ -1,0 +1,59 @@
+﻿<%@ Master Language="C#" AutoEventWireup="True" CodeBehind="Demo.master.cs" Inherits="SearchDemo.Scripts.DemoMaster" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+   <title>Demo Page</title>
+   <link href="Demo.css" rel="Stylesheet" />
+</head>
+<body>
+   <form id="form1" runat="server">
+
+   <div id="pages">
+      <a href="DemoPage1.aspx">Demo 1</a>
+      <a href="DemoPage2.aspx">Demo 2</a>
+      <a href="DemoPage3.aspx">Demo 3</a>
+      <a href="DemoPage4.aspx">Demo 4</a>
+      <a href="DemoPage5.aspx">Demo 5</a>
+   </div>
+
+   <div>
+      <h1>Test Runner</h1>
+      <h3>Index Name:</h3>
+      <asp:TextBox ID="IndexNameTextBox" Text="advanced" Width="300px" runat="server" />
+      <h3>
+         Root Item:</h3>
+      <asp:DropDownList ID="RootItemList" Width="300px" runat="server" />
+      <h3>
+         Language:</h3>
+      <asp:DropDownList ID="LanguageList" Width="300px" runat="server" />
+      <asp:ContentPlaceHolder ID="mainPH" runat="server" />
+      <h3>
+         Additional Filters:</h3>
+      Template:<br />
+      <asp:TextBox ID="TemplateFilterTextBox" Width="300px" runat="server" />
+      <br />
+      Full Text Query:<br />
+      <asp:TextBox ID="FullTextQueryTextBox" Width="300px" runat="server" />
+      <br />
+      <h3>Threshold</h3>
+      Threshold, ms:
+      <asp:TextBox ID="Threshold" Text="150" runat="server" />
+      <h3>
+         Output settings</h3>
+      <asp:CheckBox ID="VerboseOutputCheckbox" Text="Enable verbose output" Checked="False"
+         runat="server" />
+      <asp:CheckBox ID="FullItemOutputCheckbox" Text="Fetch full items" Checked="False"
+         runat="server" />
+      <br />
+      <asp:Button ID="RunButton" runat="server" OnClick="RunButton_Click" Text="Run" />
+      <asp:Button ID="CacheClearButton" runat="server" Text="Clear All Caches" OnClick="CacheClearButton_Click" />
+      <hr />
+      <asp:Panel class="ResultPanel" runat="server" Height="200px" ScrollBars="Both">
+         <asp:Label ID="TimingLabel" CssClass="normal-timing" runat="server"></asp:Label>
+         <asp:Label ID="ResultLabel" runat="server"></asp:Label>
+      </asp:Panel>
+   </div>
+   </form>
+</body>
+</html>
