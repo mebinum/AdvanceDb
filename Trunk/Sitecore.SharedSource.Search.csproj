@@ -38,7 +38,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Sandbox6.2U5\Website\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,11 +59,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Lucene.Net">
-      <HintPath>bin\Lucene.Net.dll</HintPath>
+      <HintPath>..\..\..\Sandbox6.2U5\Website\bin\Lucene.Net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Kernel">
-      <HintPath>bin\Sitecore.Kernel.dll</HintPath>
+      <HintPath>..\..\..\Sandbox6.2U5\Website\bin\Sitecore.Kernel.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -84,6 +84,36 @@
   <ItemGroup>
     <Compile Include="Constants\IndexConstants.cs" />
     <Compile Include="Crawlers\AdvancedDatabaseCrawler.cs" />
+    <Compile Include="Demo\BaseDemoPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\Demo.Master.cs">
+      <DependentUpon>Demo.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\Demo.Master.designer.cs">
+      <DependentUpon>Demo.Master.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Demo\DemoPage1.aspx.cs">
+      <DependentUpon>DemoPage1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\DemoPage2.aspx.cs">
+      <DependentUpon>DemoPage2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\DemoPage3.aspx.cs">
+      <DependentUpon>DemoPage3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\DemoPage4.aspx.cs">
+      <DependentUpon>DemoPage4.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Demo\DemoPage5.aspx.cs">
+      <DependentUpon>DemoPage5.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="DynamicFields\LinksField.cs" />
     <Compile Include="DynamicFields\IsInWorkflowField.cs" />
     <Compile Include="DynamicFields\WorkflowField.cs" />
@@ -123,6 +153,22 @@
     <Compile Include="Utilities\ItemUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Demo\Demo.css" />
+    <Content Include="Demo\DemoPage1.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Demo\DemoPage2.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Demo\DemoPage3.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Demo\DemoPage4.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Demo\DemoPage5.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Scripts\RebuildDatabaseCrawlers.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -147,6 +193,9 @@
   <ItemGroup>
     <None Include="App_Config\Include\Sitecore.SharedSource.Search.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Demo\Demo.Master">
+      <SubType>ASPXCodeBehind</SubType>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

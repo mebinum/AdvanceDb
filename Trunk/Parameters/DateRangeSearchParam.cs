@@ -15,12 +15,16 @@ namespace Sitecore.SharedSource.Search.Parameters
 
          public DateRangeField(string fieldName, DateTime startDate, DateTime endDate)
          {
-            FieldName = fieldName;
+            FieldName = fieldName.ToLowerInvariant();
             StartDate = startDate;
             EndDate = endDate;
          }
 
          #region Properties
+
+         public bool InclusiveStart { get; set; }
+
+         public bool InclusiveEnd { get; set; }
 
          public string FieldName { get; set; }
 

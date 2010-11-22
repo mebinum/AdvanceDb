@@ -211,8 +211,19 @@ namespace Sitecore.SharedSource.Search
 
       protected void AddDateRangeQuery(BooleanQuery query, DateRangeSearchParam.DateRangeField dateRangeField, BooleanClause.Occur occurance)
       {
-         var startDate = dateRangeField.StartDate.ToString(IndexConstants.DateTimeFormat);
-         var endDate = dateRangeField.EndDate.AddDays(1).ToString(IndexConstants.DateTimeFormat);
+         var startDateTime = dateRangeField.StartDate;
+         if (dateRangeField.InclusiveStart)
+         {
+            startDateTime = startDateTime.AddDays(1);
+         }
+         var startDate = startDateTime.ToString(IndexConstants.DateTimeFormat);
+
+         var endDateTime = dateRangeField.EndDate;
+         if (dateRangeField.InclusiveStart)
+         {
+            endDateTime = endDateTime.AddDays(1);
+         }
+         var endDate = endDateTime.ToString(IndexConstants.DateTimeFormat);
 
          var rangeQuery = new RangeQuery(new Term(dateRangeField.FieldName, startDate), new Term(dateRangeField.FieldName, endDate), true);
          query.Add(rangeQuery, occurance);

@@ -11,7 +11,7 @@ namespace Sitecore.SharedSource.Search.Parameters
 
          public NumericRangeField(string fieldName, int start, int end)
          {
-            FieldName = fieldName;
+            FieldName = fieldName.ToLowerInvariant();
             Start = start;
             End = end;
          }
