@@ -1,6 +1,4 @@
-﻿using Sitecore.Globalization;
-
-namespace Sitecore.SharedSource.Search.Parameters
+﻿namespace Sitecore.SharedSource.Search.Parameters
 {
    public class SearchParam
    {

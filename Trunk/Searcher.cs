@@ -90,6 +90,18 @@ namespace Sitecore.SharedSource.Search
 
       #region Searching Methods
 
+      //public virtual List<SkinnyItem> GetItemsViaTermQuery(string fieldName, string fieldValue)
+      //{
+      //   var query = new TermQuery(new Term(fieldName, fieldValue));
+      //   return RunQuery(query, false);
+      //}
+
+      //public virtual List<SkinnyItem> GetItemsViaFieldQuery(string fieldName, string fieldValue)
+      //{
+      //   var query = new FieldQuery(fieldName, fieldValue);
+      //   return RunQuery(query, false);
+      //}
+
       public virtual List<SkinnyItem> GetItems(SearchParam param)
       {
          var globalQuery = new CombinedQuery();
@@ -238,7 +250,7 @@ namespace Sitecore.SharedSource.Search
          foreach (var refinement in refinements)
          {
             var fieldName = refinement.Key.ToLowerInvariant();
-            var fieldValue = refinement.Value.ToLowerInvariant();
+            var fieldValue = refinement.Value;
             AddFieldValueClause(innerQuery, fieldName, fieldValue, occurance);
          }
 
@@ -253,6 +265,15 @@ namespace Sitecore.SharedSource.Search
          fieldValue = IdHelper.ProcessGUIDs(fieldValue);
          query.Add(new FieldQuery(fieldName, fieldValue), occurance);
       }
+
+      //protected void AddFieldValueClause(BooleanQuery query, string fieldName, string fieldValue, BooleanClause.Occur occurance)
+      //{
+      //   if (String.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(fieldValue)) return;
+
+      //   // if we are searching by _id field, do not lowercase
+      //   fieldValue = IdHelper.ProcessGUIDs(fieldValue);
+      //   query.Add(new TermQuery(new Term(fieldName, fieldValue)), occurance);
+      //}
 
       protected void AddPartialFieldValueClause(BooleanQuery query, string fieldName, string fieldValue)
       {

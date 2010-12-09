@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Xml;
 using Sitecore.Collections;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Lucene.Net.Documents;
@@ -50,11 +51,11 @@ namespace Sitecore.SharedSource.Search.Crawlers
 
             if (string.IsNullOrEmpty(value)) continue;
 
-            value = IdHelper.ProcessGUIDs(value);
             var indexType = GetIndexType(field);
             var storageType = GetStorageType(field);
             var vectorType = GetVectorType(field);
 
+            value = IdHelper.ProcessGUIDs(value);
             ProcessField(document, field.Key, value, storageType, indexType, vectorType);
 
             if (indexType == LuceneField.Index.TOKENIZED)
@@ -169,6 +170,11 @@ namespace Sitecore.SharedSource.Search.Crawlers
          return filteredFields.Where(f => !String.IsNullOrEmpty(f.Key)).ToList();
       }
 
+      //protected bool ShouldBeSplit(SCField field)
+      //{
+      //   return FieldTypeManager.GetField(field) is MultilistField;
+      //}
+
       protected LuceneField.Index GetIndexType(SCField field)
       {
          if (FieldTypes.ContainsKey(field.TypeKey))
@@ -179,7 +185,7 @@ namespace Sitecore.SharedSource.Search.Crawlers
                return (searchField as SearchField).IndexType;
             }
          }
-         return LuceneField.Index.NO;
+         return LuceneField.Index.UN_TOKENIZED;
       }
 
       protected LuceneField.Store GetStorageType(SCField field)
