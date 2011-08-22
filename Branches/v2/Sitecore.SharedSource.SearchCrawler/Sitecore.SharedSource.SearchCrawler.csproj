@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C937CD95-E2B0-4A2F-A69A-EA42A3309D21}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sitecore.SharedSource.SearchCrawler</RootNamespace>
+    <AssemblyName>Sitecore.SharedSource.SearchCrawler</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Nonshipping>true</Nonshipping>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\references\6.4.1\Lucene.Net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Kernel">
+      <HintPath>..\references\6.4.1\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Crawlers\AdvancedDatabaseCrawler.cs" />
+    <Compile Include="DynamicFields\BaseDynamicField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\ContentReferencesField.cs" />
+    <Compile Include="DynamicFields\FullPathField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\ItemSecurity\BrokenInheritanceField.cs" />
+    <Compile Include="DynamicFields\ItemSecurity\UserLevelSecurityField.cs" />
+    <Compile Include="DynamicFields\ItemSecurity\HasExplicitDeniesField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\HasLayoutField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\IconField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\LinkNumberField.cs" />
+    <Compile Include="DynamicFields\LinksField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicFields\Media\FileBasedField.cs" />
+    <Compile Include="DynamicFields\Media\MediaSizeField.cs" />
+    <Compile Include="DynamicFields\Media\OrphanMediaField.cs" />
+    <Compile Include="DynamicFields\Media\SharedMediaField.cs" />
+    <Compile Include="DynamicFields\SearchField.cs" />
+    <Compile Include="DynamicFields\SubItemCountField.cs" />
+    <Compile Include="DynamicFields\Templates\TemplateFieldCountField.cs" />
+    <Compile Include="DynamicFields\Templates\ImageSourceSetField.cs" />
+    <Compile Include="DynamicFields\Templates\IsSharedField.cs" />
+    <Compile Include="DynamicFields\Templates\TemplateCircularInheritanceField.cs" />
+    <Compile Include="DynamicFields\Templates\TemplateNameField.cs" />
+    <Compile Include="DynamicFields\Templates\TemplateUsageField.cs" />
+    <Compile Include="DynamicFields\ValidationErrorsField.cs" />
+    <Compile Include="DynamicFields\VersionNumberField.cs" />
+    <Compile Include="DynamicFields\Workflow\IsApprovedField.cs" />
+    <Compile Include="DynamicFields\Workflow\IsInWorkflowField.cs" />
+    <Compile Include="DynamicFields\Workflow\IsLockedField.cs" />
+    <Compile Include="DynamicFields\Workflow\LockDateField.cs" />
+    <Compile Include="DynamicFields\Workflow\LockUserNameField.cs" />
+    <Compile Include="DynamicFields\Workflow\WorkflowField.cs" />
+    <Compile Include="DynamicFields\Workflow\WorkflowStateField.cs" />
+    <Compile Include="FieldCrawlers\DefaultFieldCrawler.cs" />
+    <Compile Include="FieldCrawlers\LookupFieldCrawler.cs" />
+    <Compile Include="FieldCrawlers\ExtendedFieldCrawlerFactory.cs" />
+    <Compile Include="FieldCrawlers\DateFieldCrawler.cs" />
+    <Compile Include="FieldCrawlers\NumberFieldCrawler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Config\Include\Sitecore.SharedSource.SearchCrawler.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sitecore.SharedSource.Searcher\Sitecore.SharedSource.Searcher.csproj">
+      <Project>{2348C92A-A4F1-46DA-A1B1-D4407AC5D82E}</Project>
+      <Name>Sitecore.SharedSource.Searcher</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild">
+    <CallTarget Targets="DeployToWeb" Condition="Exists('..\deploy.txt')" />
+  </Target>
+  <Target Name="DeployToWeb">
+    <ReadLinesFromFile File="..\deploy.txt">
+      <Output PropertyName="DeployPath" TaskParameter="Lines" />
+    </ReadLinesFromFile>
+    <CreateItem Include="App_Config\**\*.*;bin\*.dll;sitecore\shell\override\*.xml" Exclude="**\.svn\**\*.*">
+      <Output ItemName="DeployFiles" TaskParameter="Include" />
+    </CreateItem>
+    <Copy SourceFiles="@(DeployFiles)" DestinationFiles="@(DeployFiles->'$(DeployPath)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
