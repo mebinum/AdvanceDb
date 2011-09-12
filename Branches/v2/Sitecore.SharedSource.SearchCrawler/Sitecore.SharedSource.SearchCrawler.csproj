@@ -84,49 +84,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crawlers\AdvancedDatabaseCrawler.cs" />
-    <Compile Include="DynamicFields\BaseDynamicField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\ContentReferencesField.cs" />
-    <Compile Include="DynamicFields\FullPathField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\ItemSecurity\BrokenInheritanceField.cs" />
-    <Compile Include="DynamicFields\ItemSecurity\UserLevelSecurityField.cs" />
-    <Compile Include="DynamicFields\ItemSecurity\HasExplicitDeniesField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\HasLayoutField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\IconField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\LinkNumberField.cs" />
-    <Compile Include="DynamicFields\LinksField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DynamicFields\Media\FileBasedField.cs" />
-    <Compile Include="DynamicFields\Media\MediaSizeField.cs" />
-    <Compile Include="DynamicFields\Media\OrphanMediaField.cs" />
-    <Compile Include="DynamicFields\Media\SharedMediaField.cs" />
-    <Compile Include="DynamicFields\SearchField.cs" />
-    <Compile Include="DynamicFields\SubItemCountField.cs" />
-    <Compile Include="DynamicFields\Templates\TemplateFieldCountField.cs" />
-    <Compile Include="DynamicFields\Templates\ImageSourceSetField.cs" />
-    <Compile Include="DynamicFields\Templates\IsSharedField.cs" />
-    <Compile Include="DynamicFields\Templates\TemplateCircularInheritanceField.cs" />
-    <Compile Include="DynamicFields\Templates\TemplateNameField.cs" />
-    <Compile Include="DynamicFields\Templates\TemplateUsageField.cs" />
-    <Compile Include="DynamicFields\ValidationErrorsField.cs" />
-    <Compile Include="DynamicFields\VersionNumberField.cs" />
-    <Compile Include="DynamicFields\Workflow\IsApprovedField.cs" />
-    <Compile Include="DynamicFields\Workflow\IsInWorkflowField.cs" />
-    <Compile Include="DynamicFields\Workflow\IsLockedField.cs" />
-    <Compile Include="DynamicFields\Workflow\LockDateField.cs" />
-    <Compile Include="DynamicFields\Workflow\LockUserNameField.cs" />
-    <Compile Include="DynamicFields\Workflow\WorkflowField.cs" />
-    <Compile Include="DynamicFields\Workflow\WorkflowStateField.cs" />
+    <Compile Include="DynamicFields\BaseDynamicField.cs" />
+    <Compile Include="SearchField.cs" />
     <Compile Include="FieldCrawlers\DefaultFieldCrawler.cs" />
     <Compile Include="FieldCrawlers\LookupFieldCrawler.cs" />
     <Compile Include="FieldCrawlers\ExtendedFieldCrawlerFactory.cs" />
