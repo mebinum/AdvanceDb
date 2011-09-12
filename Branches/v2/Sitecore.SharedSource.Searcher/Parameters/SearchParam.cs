@@ -95,7 +95,7 @@ namespace Sitecore.SharedSource.Searcher.Parameters
 
          // if we are searching by _id field, do not lowercase
          fieldValue = IdHelper.ProcessGUIDs(fieldValue);
-         query.Add(new FieldQuery(fieldName, fieldValue), occurance);
+         query.Add(new FieldQuery(fieldName.ToLowerInvariant(), fieldValue), occurance);
       }
    }
 }

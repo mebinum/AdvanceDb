@@ -23,7 +23,7 @@ namespace Sitecore.SharedSource.Searcher.Parameters
 
          fieldValue = IdHelper.ProcessGUIDs(fieldValue);
 
-         var fullTextQuery = new QueryParser(fieldName, index.Analyzer).Parse(fieldValue);
+         var fullTextQuery = new QueryParser(fieldName.ToLowerInvariant(), index.Analyzer).Parse(fieldValue);
 
          query.Add(fullTextQuery, BooleanClause.Occur.MUST);
       }
