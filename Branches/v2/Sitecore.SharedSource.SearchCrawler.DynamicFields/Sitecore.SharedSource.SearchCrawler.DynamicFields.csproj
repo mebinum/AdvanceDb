@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5691867D-D290-45E3-BB46-84983F24F0BC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sitecore.SharedSource.SearchCrawler.DynamicFields</RootNamespace>
+    <AssemblyName>Sitecore.SharedSource.SearchCrawler.DynamicFields</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\references\6.4.1\Lucene.Net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Kernel">
+      <HintPath>..\references\6.4.1\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Content\BaseDynamicField.cs" />
+    <Compile Include="Content\ContentReferencesField.cs" />
+    <Compile Include="Content\FullPathField.cs" />
+    <Compile Include="Content\HasLayoutField.cs" />
+    <Compile Include="Content\IconField.cs" />
+    <Compile Include="Content\LinkNumberField.cs" />
+    <Compile Include="Content\LinksField.cs" />
+    <Compile Include="Content\ParentNameField.cs" />
+    <Compile Include="Content\SubItemCountField.cs" />
+    <Compile Include="Content\ValidationErrorsField.cs" />
+    <Compile Include="Content\VersionNumberField.cs" />
+    <Compile Include="ItemSecurity\BrokenInheritanceField.cs" />
+    <Compile Include="ItemSecurity\HasExplicitDeniesField.cs" />
+    <Compile Include="ItemSecurity\UserLevelSecurityField.cs" />
+    <Compile Include="Media\FileBasedField.cs" />
+    <Compile Include="Media\MediaSizeField.cs" />
+    <Compile Include="Media\OrphanMediaField.cs" />
+    <Compile Include="Media\SharedMediaField.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates\ImageSourceSetField.cs" />
+    <Compile Include="Templates\IsSharedField.cs" />
+    <Compile Include="Templates\TemplateCircularInheritanceField.cs" />
+    <Compile Include="Templates\TemplateFieldCountField.cs" />
+    <Compile Include="Templates\TemplateNameField.cs" />
+    <Compile Include="Templates\TemplateUsageField.cs" />
+    <Compile Include="Workflow\IsApprovedField.cs" />
+    <Compile Include="Workflow\IsInWorkflowField.cs" />
+    <Compile Include="Workflow\IsLockedField.cs" />
+    <Compile Include="Workflow\LockDateField.cs" />
+    <Compile Include="Workflow\LockUserNameField.cs" />
+    <Compile Include="Workflow\WorkflowField.cs" />
+    <Compile Include="Workflow\WorkflowStateField.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sitecore.SharedSource.SearchCrawler\Sitecore.SharedSource.SearchCrawler.csproj">
+      <Project>{C937CD95-E2B0-4A2F-A69A-EA42A3309D21}</Project>
+      <Name>Sitecore.SharedSource.SearchCrawler</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Sitecore.SharedSource.Searcher\Sitecore.SharedSource.Searcher.csproj">
+      <Project>{2348C92A-A4F1-46DA-A1B1-D4407AC5D82E}</Project>
+      <Name>Sitecore.SharedSource.Searcher</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
