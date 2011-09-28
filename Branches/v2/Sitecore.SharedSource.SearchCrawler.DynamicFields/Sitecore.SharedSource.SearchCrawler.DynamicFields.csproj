@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sitecore.SharedSource.SearchCrawler.DynamicFields</RootNamespace>
     <AssemblyName>Sitecore.SharedSource.SearchCrawler.DynamicFields</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +56,6 @@
     <Compile Include="Content\IconField.cs" />
     <Compile Include="Content\LinkNumberField.cs" />
     <Compile Include="Content\LinksField.cs" />
-    <Compile Include="Content\ParentNameField.cs" />
     <Compile Include="Content\SubItemCountField.cs" />
     <Compile Include="Content\ValidationErrorsField.cs" />
     <Compile Include="Content\VersionNumberField.cs" />
