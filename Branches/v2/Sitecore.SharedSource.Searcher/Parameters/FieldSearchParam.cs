@@ -1,4 +1,5 @@
 ﻿using System;
+using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Sitecore.Search;
@@ -6,26 +7,48 @@ using Sitecore.SharedSource.Searcher.Utilities;
 
 namespace Sitecore.SharedSource.Searcher.Parameters
 {
-   public class FieldSearchParam : SearchParam
-   {
-      public string FieldName { get; set; }
+    public class FieldSearchParam : SearchParam
+    {
+        public string FieldName { get; set; }
+        public string FieldValue { get; set; }
+        public bool Partial { get; set; }
 
-      public override BooleanQuery ProcessQuery(QueryOccurance occurance, Index index)
-      {
-         var query = base.ProcessQuery(occurance, index) ?? new BooleanQuery();
-         AddPartialFieldValueClause(index, query, FieldName, RelatedIds);
-         return query;
-      }
+        public override BooleanQuery ProcessQuery(QueryOccurance occurance, Index index)
+        {
+            var query = base.ProcessQuery(occurance, index) ?? new BooleanQuery();
 
-      protected void AddPartialFieldValueClause(Index index, BooleanQuery query, string fieldName, string fieldValue)
-      {
-         if (String.IsNullOrEmpty(fieldValue)) return;
+            if (Partial)
+            {
+                AddPartialFieldValueClause(index, query, FieldName, FieldValue);
+            }
+            else
+            {
+                AddFieldValueClause(index, query, FieldName, FieldValue);
+            }
 
-         fieldValue = IdHelper.ProcessGUIDs(fieldValue);
+            return query;
+        }
 
-         var fullTextQuery = new QueryParser(fieldName.ToLowerInvariant(), index.Analyzer).Parse(fieldValue);
+        protected void AddPartialFieldValueClause(Index index, BooleanQuery query, string fieldName, string fieldValue)
+        {
+            if (String.IsNullOrEmpty(fieldValue)) return;
 
-         query.Add(fullTextQuery, BooleanClause.Occur.MUST);
-      }
-   }
+            fieldValue = IdHelper.ProcessGUIDs(fieldValue);
+
+            var fieldQuery = new QueryParser(fieldName.ToLowerInvariant(), index.Analyzer).Parse(fieldValue);
+
+            query.Add(fieldQuery, BooleanClause.Occur.MUST);
+        }
+
+        protected void AddFieldValueClause(Index index, BooleanQuery query, string fieldName, string fieldValue)
+        {
+            if (String.IsNullOrEmpty(fieldValue)) return;
+
+            fieldValue = IdHelper.ProcessGUIDs(fieldValue);
+
+            var fieldQuery = new TermQuery(new Term(fieldName.ToLowerInvariant(), fieldValue));
+
+            query.Add(fieldQuery, BooleanClause.Occur.MUST);
+        }
+    }
 }

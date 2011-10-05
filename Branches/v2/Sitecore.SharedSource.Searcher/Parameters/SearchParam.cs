@@ -4,98 +4,111 @@ using Lucene.Net.Search;
 using Sitecore.Data;
 using Sitecore.Search;
 using Sitecore.SharedSource.Searcher.Utilities;
+using Sitecore.StringExtensions;
 
 namespace Sitecore.SharedSource.Searcher.Parameters
 {
-   public class SearchParam: ISearchParam
-   {
-      public string RelatedIds { get; set; }
-      public string TemplateIds { get; set; }
-      public string LocationIds { get; set; }
-      public string FullTextQuery { get; set; }
-      public string Language { get; set; }
-      public QueryOccurance Condition { get; set; }
+    public class SearchParam : ISearchParam
+    {
+        private string _database;
 
-      public SearchParam()
-      {
-         Condition = QueryOccurance.Must;
-      }
+        public string RelatedIds { get; set; }
+        public string TemplateIds { get; set; }
+        public string LocationIds { get; set; }
+        public string FullTextQuery { get; set; }
+        public string Language { get; set; }
+        public string Database
+        {
+            get
+            {
+                return _database.IsNullOrEmpty() ? Context.Database.Name : _database;
+            }
+            set { _database = value; }
+        }
 
-      public virtual BooleanQuery ProcessQuery(QueryOccurance occurance, Index index)
-      {
-         var innerQuery = new CombinedQuery();
+        public QueryOccurance Condition { get; set; }
 
-         ApplyLanguageClause(innerQuery, Language, occurance);
-         ApplyFullTextClause(innerQuery, FullTextQuery, occurance);
-         ApplyRelationFilter(innerQuery, RelatedIds, occurance);
-         ApplyTemplateFilter(innerQuery, TemplateIds, occurance);
-         ApplyLocationFilter(innerQuery, LocationIds, occurance);
+        public SearchParam()
+        {
+            Condition = QueryOccurance.Must;
+        }
 
-         if(innerQuery.Clauses.Count < 1)
-            return null;
+        public virtual BooleanQuery ProcessQuery(QueryOccurance occurance, Index index)
+        {
+            var innerQuery = new CombinedQuery();
 
-         var translator = new QueryTranslator(index);
-         var booleanQuery = translator.ConvertCombinedQuery(innerQuery);
+            ApplyLanguageClause(innerQuery, Language, occurance);
+            ApplyFullTextClause(innerQuery, FullTextQuery, occurance);
+            ApplyRelationFilter(innerQuery, RelatedIds, occurance);
+            ApplyTemplateFilter(innerQuery, TemplateIds, occurance);
+            ApplyLocationFilter(innerQuery, LocationIds, occurance);
+            AddFieldValueClause(innerQuery, BuiltinFields.Database, Database, occurance);
 
-         return booleanQuery;
-      }
+            if (innerQuery.Clauses.Count < 1)
+                return null;
 
-      protected void ApplyLanguageClause(CombinedQuery query, string language, QueryOccurance occurance)
-      {
-         if (String.IsNullOrEmpty(language)) return;
+            var translator = new QueryTranslator(index);
+            var booleanQuery = translator.ConvertCombinedQuery(innerQuery);
 
-         query.Add(new FieldQuery(BuiltinFields.Language, language.ToLowerInvariant()), occurance);
-      }
+            return booleanQuery;
+        }
 
-      protected void ApplyFullTextClause(CombinedQuery query, string searchText, QueryOccurance occurance)
-      {
-         if (String.IsNullOrEmpty(searchText)) return;
+        protected void ApplyLanguageClause(CombinedQuery query, string language, QueryOccurance occurance)
+        {
+            if (String.IsNullOrEmpty(language)) return;
 
-         query.Add(new FullTextQuery(searchText), occurance);
-      }
+            query.Add(new FieldQuery(BuiltinFields.Language, language.ToLowerInvariant()), occurance);
+        }
 
-      protected void ApplyIdFilter(CombinedQuery query, string fieldName, string filter, QueryOccurance occurance)
-      {
-         if (String.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(filter)) return;
+        protected void ApplyFullTextClause(CombinedQuery query, string searchText, QueryOccurance occurance)
+        {
+            if (String.IsNullOrEmpty(searchText)) return;
 
-         var filterQuery = new CombinedQuery();
+            query.Add(new FullTextQuery(searchText), occurance);
+        }
 
-         var values = IdHelper.ParseId(filter);
+        protected void ApplyIdFilter(CombinedQuery query, string fieldName, string filter, QueryOccurance occurance)
+        {
+            if (String.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(filter)) return;
 
-         foreach (var value in values.Where(ID.IsID))
-         {
-            AddFieldValueClause(filterQuery, fieldName, value, QueryOccurance.Should);
-         }
+            var filterQuery = new CombinedQuery();
 
-         query.Add(filterQuery, occurance);
-      }
+            var values = IdHelper.ParseId(filter);
 
-      protected void ApplyTemplateFilter(CombinedQuery query, string templateIds, QueryOccurance occurance)
-      {
-         if (String.IsNullOrEmpty(templateIds)) return;
+            foreach (var value in values.Where(ID.IsID))
+            {
+                AddFieldValueClause(filterQuery, fieldName, value, QueryOccurance.Should);
+            }
 
-         templateIds = IdHelper.NormalizeGuid(templateIds);
-         var fieldQuery = new FieldQuery(BuiltinFields.Template, templateIds);
-         query.Add(fieldQuery, occurance);
-      }
+            query.Add(filterQuery, occurance);
+        }
 
-      protected void ApplyLocationFilter(CombinedQuery query, string locationIds, QueryOccurance occurance)
-      {
-         ApplyIdFilter(query, BuiltinFields.Path, locationIds, occurance);
-      }
+        protected void ApplyTemplateFilter(CombinedQuery query, string templateIds, QueryOccurance occurance)
+        {
+            if (String.IsNullOrEmpty(templateIds)) return;
 
-      protected void ApplyRelationFilter(CombinedQuery query, string ids, QueryOccurance occurance)
-      {
-         ApplyIdFilter(query, BuiltinFields.Links, ids, occurance);
-      }
+            templateIds = IdHelper.NormalizeGuid(templateIds);
+            var fieldQuery = new FieldQuery(BuiltinFields.Template, templateIds);
+            query.Add(fieldQuery, occurance);
+        }
 
-      protected void AddFieldValueClause(CombinedQuery query, string fieldName, string fieldValue, QueryOccurance occurance)
-      {
-         if (String.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(fieldValue)) return;
+        protected void ApplyLocationFilter(CombinedQuery query, string locationIds, QueryOccurance occurance)
+        {
+            ApplyIdFilter(query, BuiltinFields.Path, locationIds, occurance);
+        }
 
-         // if we are searching by _id field, do not lowercase
-         fieldValue = IdHelper.ProcessGUIDs(fieldValue);
-         query.Add(new FieldQuery(fieldName.ToLowerInvariant(), fieldValue), occurance);
-      }
-   }
+        protected void ApplyRelationFilter(CombinedQuery query, string ids, QueryOccurance occurance)
+        {
+            ApplyIdFilter(query, BuiltinFields.Links, ids, occurance);
+        }
+
+        protected void AddFieldValueClause(CombinedQuery query, string fieldName, string fieldValue, QueryOccurance occurance)
+        {
+            if (String.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(fieldValue)) return;
+
+            // if we are searching by _id field, do not lowercase
+            fieldValue = IdHelper.ProcessGUIDs(fieldValue);
+            query.Add(new FieldQuery(fieldName.ToLowerInvariant(), fieldValue), occurance);
+        }
+    }
 }
