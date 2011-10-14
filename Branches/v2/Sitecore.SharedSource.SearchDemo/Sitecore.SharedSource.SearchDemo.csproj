@@ -140,6 +140,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="sitecore modules\Web\SearchDemo\Header.ascx" />
     <Content Include="sitecore modules\Web\SearchDemo\default.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\FieldSearchDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\ComboSearchDemoPage.aspx" />
@@ -150,6 +151,7 @@
     <Content Include="sitecore modules\Web\SearchDemo\NumericRangeDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\DateRangeDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\RebuildDatabaseCrawlers.aspx" />
+    <Content Include="sitecore modules\Web\SearchDemo\TopNav.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="sitecore modules\Web\SearchDemo\Demo.Master" />
@@ -189,7 +191,7 @@
     <ReadLinesFromFile File="..\deploy.txt">
       <Output PropertyName="DeployPath" TaskParameter="Lines" />
     </ReadLinesFromFile>
-    <CreateItem Include="bin\*.dll;sitecore modules\web\searchdemo\*.aspx;sitecore modules\web\searchdemo\*.master;sitecore modules\web\searchdemo\*.css" Exclude="**\.svn\**\*.*">
+    <CreateItem Include="bin\*.dll;sitecore modules\web\searchdemo\*.aspx;sitecore modules\web\searchdemo\*.master;sitecore modules\web\searchdemo\*.ascx;sitecore modules\web\searchdemo\*.css" Exclude="**\.svn\**\*.*">
       <Output ItemName="DeployFiles" TaskParameter="Include" />
     </CreateItem>
     <Copy SourceFiles="@(DeployFiles)" DestinationFiles="@(DeployFiles->'$(DeployPath)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />

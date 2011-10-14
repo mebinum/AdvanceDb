@@ -9,7 +9,7 @@
     float: left;
 }
 
-#ResultPanel
+.ResultPanel
 {
     font-size: 12px;
     width: 600px;
@@ -17,20 +17,24 @@
     float: left;
 }
 
-#ResultPanel .normal-timing
+.ResultPanel .normal-timing
 {
     color: Green;
     font-weight: bold;
 }
 
-#ResultPanel .exceeded-timing
+.ResultPanel .exceeded-timing
 {
     color: Red;
     font-weight: bolder;
 }
 
-#pages ul
+#topnav li
 {
-    list-style: none;
+    display: inline;
+    list-style-type: none;
+    padding-right: 10px;
 }
+
+
 

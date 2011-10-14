@@ -54,7 +54,6 @@ namespace SearchDemo.Scripts
 
       private void Initialize()
       {
-          DatabaseNameTextBox.Text = Sitecore.Context.Database.Name;
           InitializeRoots();
           InitializeLanguages();
       }
