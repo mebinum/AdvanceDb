@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.SharedSource.Searc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.SharedSource.SearchDemo", "Sitecore.SharedSource.SearchDemo\Sitecore.SharedSource.SearchDemo.csproj", "{6BAFC659-9A2B-4853-9225-A6343A85054E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.SharedSource.SearchCrawler.DynamicFields", "Sitecore.SharedSource.SearchCrawler.CustomDynamicFields\Sitecore.SharedSource.SearchCrawler.DynamicFields.csproj", "{5691867D-D290-45E3-BB46-84983F24F0BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.SharedSource.SearchCrawler.DynamicFields", "Sitecore.SharedSource.SearchCrawler.DynamicFields\Sitecore.SharedSource.SearchCrawler.DynamicFields.csproj", "{5691867D-D290-45E3-BB46-84983F24F0BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

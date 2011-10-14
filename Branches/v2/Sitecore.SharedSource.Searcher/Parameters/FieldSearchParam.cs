@@ -23,7 +23,7 @@ namespace Sitecore.SharedSource.Searcher.Parameters
             }
             else
             {
-                AddFieldValueClause(index, query, FieldName, FieldValue);
+                AddExactFieldValueClause(index, query, FieldName, FieldValue);
             }
 
             return query;
@@ -40,15 +40,16 @@ namespace Sitecore.SharedSource.Searcher.Parameters
             query.Add(fieldQuery, BooleanClause.Occur.MUST);
         }
 
-        protected void AddFieldValueClause(Index index, BooleanQuery query, string fieldName, string fieldValue)
+        protected void AddExactFieldValueClause(Index index, BooleanQuery query, string fieldName, string fieldValue)
         {
             if (String.IsNullOrEmpty(fieldValue)) return;
 
             fieldValue = IdHelper.ProcessGUIDs(fieldValue);
 
-            var fieldQuery = new TermQuery(new Term(fieldName.ToLowerInvariant(), fieldValue));
+            var phraseQuery = new PhraseQuery();
+            phraseQuery.Add(new Term(fieldName.ToLowerInvariant(), fieldValue));
 
-            query.Add(fieldQuery, BooleanClause.Occur.MUST);
+            query.Add(phraseQuery, BooleanClause.Occur.MUST);
         }
     }
 }

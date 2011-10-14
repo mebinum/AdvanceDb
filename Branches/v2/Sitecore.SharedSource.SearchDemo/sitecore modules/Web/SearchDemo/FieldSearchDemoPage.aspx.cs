@@ -23,7 +23,7 @@ namespace Sitecore.SharedSource.SearchDemo
                 TemplateIds = templateFilter,
                 LocationIds = locationFilter,
                 FullTextQuery = fullTextQuery,
-                Partial = Partial.Checked,
+                Partial = Partial.Checked
             };
 
             using (var runner = new QueryRunner(indexName))
