@@ -62,6 +62,13 @@
     <Compile Include="sitecore modules\Web\SearchDemo\BaseDemoPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="sitecore modules\Web\SearchDemo\SortDemoPage.aspx.cs">
+      <DependentUpon>SortDemoPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="sitecore modules\Web\SearchDemo\SortDemoPage.aspx.designer.cs">
+      <DependentUpon>SortDemoPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="sitecore modules\Web\SearchDemo\default.aspx.cs">
       <DependentUpon>default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -140,6 +147,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="sitecore modules\Web\SearchDemo\SortDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\Header.ascx" />
     <Content Include="sitecore modules\Web\SearchDemo\default.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\FieldSearchDemoPage.aspx" />
