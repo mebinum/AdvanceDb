@@ -16,6 +16,11 @@ namespace Sitecore.SharedSource.Searcher.Utilities
 {
     public class SearchHelper
     {
+        public static Database ContextDB
+        {
+            get { return Context.ContentDatabase ?? Context.Database; }
+        }
+
         public static string FormatNumber(double number)
         {
             return number.ToString().PadLeft(int.MaxValue.ToString().ToCharArray().Count(), '0');

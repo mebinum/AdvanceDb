@@ -21,7 +21,7 @@ namespace Sitecore.SharedSource.Searcher.Parameters
         {
             get
             {
-                return _database.IsNullOrEmpty() ? Context.Database.Name : _database;
+                return _database.IsNullOrEmpty() ? SearchHelper.ContextDB.Name : _database;
             }
             set { _database = value; }
         }
