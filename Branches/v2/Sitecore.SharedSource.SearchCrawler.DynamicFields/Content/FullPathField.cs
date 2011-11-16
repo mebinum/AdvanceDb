@@ -1,7 +1,7 @@
 ﻿using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
-namespace Sitecore.SharedSource.SearchCrawler.DynamicFields
+namespace Sitecore.SharedSource.SearchCrawler.DynamicFields.Content
 {
     public class FullPathField : BaseDynamicField
     {

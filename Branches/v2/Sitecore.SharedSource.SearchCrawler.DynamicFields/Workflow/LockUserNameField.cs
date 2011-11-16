@@ -18,6 +18,5 @@ namespace Sitecore.SharedSource.SearchCrawler.DynamicFields.Workflow
 
          return string.Empty;
       }
-
    }
 }

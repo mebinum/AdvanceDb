@@ -133,7 +133,7 @@
     <ReadLinesFromFile File="..\deploy.txt">
       <Output PropertyName="DeployPath" TaskParameter="Lines" />
     </ReadLinesFromFile>
-    <CreateItem Include="App_Config\**\*.*;bin\*.dll;sitecore\shell\override\*.xml" Exclude="**\.svn\**\*.*">
+    <CreateItem Include="App_Config\**\*.*;bin\*.*;sitecore\shell\override\*.xml" Exclude="**\.svn\**\*.*">
       <Output ItemName="DeployFiles" TaskParameter="Include" />
     </CreateItem>
     <Copy SourceFiles="@(DeployFiles)" DestinationFiles="@(DeployFiles->'$(DeployPath)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />

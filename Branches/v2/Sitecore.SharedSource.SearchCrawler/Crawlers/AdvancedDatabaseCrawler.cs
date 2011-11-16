@@ -24,297 +24,303 @@ using LuceneField = Lucene.Net.Documents.Field;
 
 namespace Sitecore.SharedSource.SearchCrawler.Crawlers
 {
-   public class AdvancedDatabaseCrawler : DatabaseCrawler
-   {
-      #region Fields
+    public class AdvancedDatabaseCrawler : DatabaseCrawler
+    {
+        #region Fields
 
-      private List<BaseDynamicField> _dynamicFields = new List<BaseDynamicField>();
-      private SafeDictionary<string, string> _fieldCrawlers = new SafeDictionary<string, string>();
-      private readonly SafeDictionary<string, bool> _fieldFilter = new SafeDictionary<string, bool>();
-      private SafeDictionary<string, SearchField> _fieldTypes = new SafeDictionary<string, SearchField>();
-      private bool _hasFieldExcludes;
-      private bool _hasFieldIncludes;
+        private List<BaseDynamicField> _dynamicFields = new List<BaseDynamicField>();
+        private SafeDictionary<string, string> _fieldCrawlers = new SafeDictionary<string, string>();
+        private readonly SafeDictionary<string, bool> _fieldFilter = new SafeDictionary<string, bool>();
+        private SafeDictionary<string, SearchField> _fieldTypes = new SafeDictionary<string, SearchField>();
+        private bool _hasFieldExcludes;
+        private bool _hasFieldIncludes;
 
-      #endregion
+        #endregion
 
-      #region Override Methods
+        #region Override Methods
 
-      // checking if item has template
-      protected override void IndexVersion(Item item, Item latestVersion, IndexUpdateContext context)
-      {
-         if (item.Template != null)
-            base.IndexVersion(item, latestVersion, context);
-         else
-         {
-            Log.Warn(string.Format("AdvancedDatabaseCrawler: Cannot update item version. Reason: Template is NULL in item '{0}'.", item.Paths.FullPath), this);
-         }
-      }
-
-      protected override void AddAllFields(Document document, Item item, bool versionSpecific)
-      {
-         Assert.ArgumentNotNull(document, "document");
-         Assert.ArgumentNotNull(item, "item");
-
-         //Log.Info("Processing item: {0}".FormatWith(item.Paths.FullPath), this);
-
-         foreach (var field in FilteredFields(item))
-         {
-            //Log.Info("Processing field: {0}, value {1}".FormatWith(field.Name, field.Value), this);
-
-            var value = ExtendedFieldCrawlerFactory.GetFieldCrawlerValue(field, FieldCrawlers);
-
-            if (string.IsNullOrEmpty(value)) continue;
-
-            var indexType = GetIndexType(field);
-            var storageType = GetStorageType(field);
-            var vectorType = GetVectorType(field);
-
-            value = IdHelper.ProcessGUIDs(value);
-            ProcessField(document, field.Key, value, storageType, indexType, vectorType);
-
-            if (indexType == LuceneField.Index.TOKENIZED)
+        // checking if item has template
+        protected override void IndexVersion(Item item, Item latestVersion, IndexUpdateContext context)
+        {
+            if (item.Template != null)
+                base.IndexVersion(item, latestVersion, context);
+            else
             {
-               ProcessField(document, BuiltinFields.Content, value, LuceneField.Store.NO, LuceneField.Index.TOKENIZED);
+                Log.Warn(string.Format("AdvancedDatabaseCrawler: Cannot update item version. Reason: Template is NULL in item '{0}'.", item.Paths.FullPath), this);
             }
-         }
+        }
 
-         ProcessDynamicFields(document, item);
-      }
+        protected override void AddAllFields(Document document, Item item, bool versionSpecific)
+        {
+            Assert.ArgumentNotNull(document, "document");
+            Assert.ArgumentNotNull(item, "item");
 
-      #endregion
+            //Log.Info("Processing item: {0}".FormatWith(item.Paths.FullPath), this);
 
-      #region Config Methods
-
-      public virtual void AddDynamicFields(XmlNode configNode)
-      {
-         Assert.ArgumentNotNull(configNode, "configNode");
-         var type = XmlUtil.GetAttribute("type", configNode);
-         var fieldName = XmlUtil.GetAttribute("name", configNode);
-         var storageType = XmlUtil.GetAttribute("storageType", configNode);
-         var indexType = XmlUtil.GetAttribute("indexType", configNode);
-         var vectorType = XmlUtil.GetAttribute("vectorType", configNode);
-         var boost = XmlUtil.GetAttribute("boost", configNode);
-         var field = ReflectionUtil.CreateObject(type);
-
-         if (field == null || !(field is BaseDynamicField)) return;
-
-         var dynamicField = field as BaseDynamicField;
-         dynamicField.SetStorageType(storageType);
-         dynamicField.SetIndexType(indexType);
-         dynamicField.SetVectorType(vectorType);
-         dynamicField.SetBoost(boost);
-         dynamicField.FieldKey = fieldName.ToLowerInvariant();
-         DynamicFields.Add(dynamicField);
-      }
-
-      public virtual void AddFieldCrawlers(XmlNode configNode)
-      {
-         Assert.ArgumentNotNull(configNode, "configNode");
-         var type = XmlUtil.GetAttribute("type", configNode);
-         var fieldType = XmlUtil.GetAttribute("fieldType", configNode);
-         FieldCrawlers.Add(fieldType.ToLowerInvariant(), type);
-      }
-
-      public virtual void AddFieldTypes(XmlNode configNode)
-      {
-         Assert.ArgumentNotNull(configNode, "configNode");
-         var fieldName = XmlUtil.GetAttribute("name", configNode);
-         var storageType = XmlUtil.GetAttribute("storageType", configNode);
-         var indexType = XmlUtil.GetAttribute("indexType", configNode);
-         var vectorType = XmlUtil.GetAttribute("vectorType", configNode);
-         var boost = XmlUtil.GetAttribute("boost", configNode);
-         var searchField = new SearchField(storageType, indexType, vectorType, boost);
-         FieldTypes.Add(fieldName.ToLowerInvariant(), searchField);
-      }
-
-      #endregion
-
-      #region Helper Methods
-
-      protected AbstractField CreateField(string name, string value, LuceneField.Store storageType, LuceneField.Index indexType, LuceneField.TermVector vectorType, float boost)
-      {
-         var field = new LuceneField(name, value, storageType, indexType, vectorType);
-         field.SetBoost(boost);
-         return field;
-      }
-
-      public void ExcludeField(string value)
-      {
-         Assert.ArgumentNotNullOrEmpty(value, "fieldId");
-         Assert.IsTrue(ID.IsID(value), "fieldId parameter is not a valid GUID");
-         _hasFieldExcludes = true;
-         _fieldFilter[value] = false;
-      }
-
-      public void IncludeField(string value)
-      {
-         Assert.ArgumentNotNullOrEmpty(value, "fieldId");
-         Assert.IsTrue(ID.IsID(value), "fieldId parameter is not a valid GUID");
-         _hasFieldIncludes = true;
-         _fieldFilter[value] = true;
-      }
-
-      protected virtual List<SCField> FilteredFields(Item item)
-      {
-         var filteredFields = new List<SCField>();
-         if (IndexAllFields)
-         {
-            item.Fields.ReadAll();
-            filteredFields.AddRange(item.Fields);
-         }
-         else if (HasFieldIncludes)
-         {
-            foreach (var includeFieldId in from p in FieldFilter where p.Value select p)
+            foreach (var field in FilteredFields(item))
             {
-               filteredFields.Add(item.Fields[ID.Parse(includeFieldId)]);
+                //Log.Info("Processing field: {0}, value {1}".FormatWith(field.Name, field.Value), this);
+
+                var value = ExtendedFieldCrawlerFactory.GetFieldCrawlerValue(field, FieldCrawlers);
+
+                if (string.IsNullOrEmpty(value)) continue;
+
+                var indexType = GetIndexType(field);
+                var storageType = GetStorageType(field);
+                var vectorType = GetVectorType(field);
+
+                value = IdHelper.ProcessGUIDs(value);
+                ProcessField(document, field.Key, value, storageType, indexType, vectorType);
+
+                if (indexType == LuceneField.Index.TOKENIZED)
+                {
+                    ProcessField(document, BuiltinFields.Content, value, LuceneField.Store.NO, LuceneField.Index.TOKENIZED);
+                }
             }
-         }
-         if (HasFieldExcludes)
-         {
-            foreach (SCField field in item.Fields)
+
+            ProcessDynamicFields(document, item);
+        }
+
+        #endregion
+
+        #region Config Methods
+
+        public virtual void AddDynamicFields(XmlNode configNode)
+        {
+            //Log.Info("adding dynamic fields", this);
+
+            Assert.ArgumentNotNull(configNode, "configNode");
+            var type = XmlUtil.GetAttribute("type", configNode);
+            var fieldName = XmlUtil.GetAttribute("name", configNode);
+            var storageType = XmlUtil.GetAttribute("storageType", configNode);
+            var indexType = XmlUtil.GetAttribute("indexType", configNode);
+            var vectorType = XmlUtil.GetAttribute("vectorType", configNode);
+            var boost = XmlUtil.GetAttribute("boost", configNode);
+            var field = ReflectionUtil.CreateObject(type);
+
+            if (field == null || !(field is BaseDynamicField)) return;
+
+            var dynamicField = field as BaseDynamicField;
+
+            //Log.Info("adding dynamic field: {0}".FormatWith(dynamicField.FieldKey), this);
+            dynamicField.SetStorageType(storageType);
+            dynamicField.SetIndexType(indexType);
+            dynamicField.SetVectorType(vectorType);
+            dynamicField.SetBoost(boost);
+            dynamicField.FieldKey = fieldName.ToLowerInvariant();
+            DynamicFields.Add(dynamicField);
+        }
+
+        public virtual void AddFieldCrawlers(XmlNode configNode)
+        {
+            Assert.ArgumentNotNull(configNode, "configNode");
+            var type = XmlUtil.GetAttribute("type", configNode);
+            var fieldType = XmlUtil.GetAttribute("fieldType", configNode);
+            FieldCrawlers.Add(fieldType.ToLowerInvariant(), type);
+        }
+
+        public virtual void AddFieldTypes(XmlNode configNode)
+        {
+            Assert.ArgumentNotNull(configNode, "configNode");
+            var fieldName = XmlUtil.GetAttribute("name", configNode);
+            var storageType = XmlUtil.GetAttribute("storageType", configNode);
+            var indexType = XmlUtil.GetAttribute("indexType", configNode);
+            var vectorType = XmlUtil.GetAttribute("vectorType", configNode);
+            var boost = XmlUtil.GetAttribute("boost", configNode);
+            var searchField = new SearchField(storageType, indexType, vectorType, boost);
+            FieldTypes.Add(fieldName.ToLowerInvariant(), searchField);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        protected AbstractField CreateField(string name, string value, LuceneField.Store storageType, LuceneField.Index indexType, LuceneField.TermVector vectorType, float boost)
+        {
+            var field = new LuceneField(name, value, storageType, indexType, vectorType);
+            field.SetBoost(boost);
+            return field;
+        }
+
+        public void ExcludeField(string value)
+        {
+            Assert.ArgumentNotNullOrEmpty(value, "fieldId");
+            Assert.IsTrue(ID.IsID(value), "fieldId parameter is not a valid GUID");
+            _hasFieldExcludes = true;
+            _fieldFilter[value] = false;
+        }
+
+        public void IncludeField(string value)
+        {
+            Assert.ArgumentNotNullOrEmpty(value, "fieldId");
+            Assert.IsTrue(ID.IsID(value), "fieldId parameter is not a valid GUID");
+            _hasFieldIncludes = true;
+            _fieldFilter[value] = true;
+        }
+
+        protected virtual List<SCField> FilteredFields(Item item)
+        {
+            var filteredFields = new List<SCField>();
+            if (IndexAllFields)
             {
-               var fieldKey = field.ID.ToString();
-               if (!(!FieldFilter.ContainsKey(fieldKey) ? true : FieldFilter[fieldKey]))
-               {
-                  filteredFields.Remove(field);
-               }
+                item.Fields.ReadAll();
+                filteredFields.AddRange(item.Fields);
             }
-         }
-
-         return filteredFields.Where(f => !String.IsNullOrEmpty(f.Key)).ToList();
-      }
-
-      //protected bool ShouldBeSplit(SCField field)
-      //{
-      //   return FieldTypeManager.GetField(field) is MultilistField;
-      //}
-
-      protected LuceneField.Index GetIndexType(SCField field)
-      {
-         if (FieldTypes.ContainsKey(field.TypeKey))
-         {
-            object searchField = FieldTypes[field.TypeKey];
-            if (searchField is SearchField)
+            else if (HasFieldIncludes)
             {
-               return (searchField as SearchField).IndexType;
+                foreach (var includeFieldId in from p in FieldFilter where p.Value select p)
+                {
+                    filteredFields.Add(item.Fields[ID.Parse(includeFieldId.Key)]);
+                }
             }
-         }
-         return LuceneField.Index.UN_TOKENIZED;
-      }
-
-      protected LuceneField.Store GetStorageType(SCField field)
-      {
-         if (FieldTypes.ContainsKey(field.TypeKey))
-         {
-            var searchField = FieldTypes[field.TypeKey];
-            return searchField.StorageType;
-         }
-         return LuceneField.Store.NO;
-      }
-
-      protected LuceneField.TermVector GetVectorType(SCField field)
-      {
-         if (FieldTypes.ContainsKey(field.TypeKey))
-         {
-            var searchField = FieldTypes[field.TypeKey];
-            return searchField.VectorType;
-         }
-         return LuceneField.TermVector.NO;
-      }
-
-      protected virtual void ProcessDynamicFields(Document document, Item item)
-      {
-         foreach (var dynamicField in DynamicFields)
-         {
-            var fieldValue = dynamicField.ResolveValue(item);
-
-            if (fieldValue != null)
+            if (HasFieldExcludes)
             {
-               ProcessField(document, dynamicField.FieldKey, fieldValue, dynamicField.StorageType,
-                            dynamicField.IndexType, dynamicField.VectorType, dynamicField.Boost);
+                foreach (SCField field in item.Fields)
+                {
+                    var fieldKey = field.ID.ToString();
+                    if (!(!FieldFilter.ContainsKey(fieldKey) ? true : FieldFilter[fieldKey]))
+                    {
+                        filteredFields.Remove(field);
+                    }
+                }
             }
-         }
-      }
 
-      protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index)
-      {
-         ProcessField(doc, fieldKey, fieldValue, storage, index, LuceneField.TermVector.NO);
-      }
+            return filteredFields.Where(f => !String.IsNullOrEmpty(f.Key)).ToList();
+        }
 
-      protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index, LuceneField.TermVector vector)
-      {
-         ProcessField(doc, fieldKey, fieldValue, storage, index, vector, 1f);
-      }
+        //protected bool ShouldBeSplit(SCField field)
+        //{
+        //   return FieldTypeManager.GetField(field) is MultilistField;
+        //}
 
-      protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index, LuceneField.TermVector vector, float boost)
-      {
-         if ((!String.IsNullOrEmpty(fieldKey) && !String.IsNullOrEmpty(fieldValue))
-            && (index != LuceneField.Index.NO || storage != LuceneField.Store.NO))
-         {
-            doc.Add(CreateField(fieldKey, fieldValue, storage, index, vector, boost));
-         }
-      }
+        protected LuceneField.Index GetIndexType(SCField field)
+        {
+            if (FieldTypes.ContainsKey(field.TypeKey))
+            {
+                object searchField = FieldTypes[field.TypeKey];
+                if (searchField is SearchField)
+                {
+                    return (searchField as SearchField).IndexType;
+                }
+            }
+            return LuceneField.Index.UN_TOKENIZED;
+        }
 
-      #endregion
+        protected LuceneField.Store GetStorageType(SCField field)
+        {
+            if (FieldTypes.ContainsKey(field.TypeKey))
+            {
+                var searchField = FieldTypes[field.TypeKey];
+                return searchField.StorageType;
+            }
+            return LuceneField.Store.NO;
+        }
 
-      #region Properties
+        protected LuceneField.TermVector GetVectorType(SCField field)
+        {
+            if (FieldTypes.ContainsKey(field.TypeKey))
+            {
+                var searchField = FieldTypes[field.TypeKey];
+                return searchField.VectorType;
+            }
+            return LuceneField.TermVector.NO;
+        }
 
-      protected List<BaseDynamicField> DynamicFields
-      {
-         get
-         {
-            return _dynamicFields;
-         }
-      }
+        protected virtual void ProcessDynamicFields(Document document, Item item)
+        {
+            foreach (var dynamicField in DynamicFields)
+            {
+                var fieldValue = dynamicField.ResolveValue(item);
 
-      protected SafeDictionary<string, string> FieldCrawlers
-      {
-         get
-         {
-            return _fieldCrawlers;
-         }
-      }
+                //Log.Info("Processing dynamic field: {0}, value {1}".FormatWith(dynamicField.FieldKey, fieldValue), this);
 
-      protected SafeDictionary<string, bool> FieldFilter
-      {
-         get
-         {
-            return _fieldFilter;
-         }
-      }
+                if (fieldValue != null)
+                {
+                    ProcessField(document, dynamicField.FieldKey, fieldValue, dynamicField.StorageType,
+                                 dynamicField.IndexType, dynamicField.VectorType, dynamicField.Boost);
+                }
+            }
+        }
 
-      protected SafeDictionary<string, SearchField> FieldTypes
-      {
-         get
-         {
-            return _fieldTypes;
-         }
-      }
+        protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index)
+        {
+            ProcessField(doc, fieldKey, fieldValue, storage, index, LuceneField.TermVector.NO);
+        }
 
-      protected bool HasFieldExcludes
-      {
-         get
-         {
-            return _hasFieldExcludes;
-         }
-         set
-         {
-            _hasFieldExcludes = value;
-         }
-      }
+        protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index, LuceneField.TermVector vector)
+        {
+            ProcessField(doc, fieldKey, fieldValue, storage, index, vector, 1f);
+        }
 
-      protected bool HasFieldIncludes
-      {
-         get
-         {
-            return _hasFieldIncludes;
-         }
-         set
-         {
-            _hasFieldIncludes = value;
-         }
-      }
+        protected virtual void ProcessField(Document doc, string fieldKey, string fieldValue, LuceneField.Store storage, LuceneField.Index index, LuceneField.TermVector vector, float boost)
+        {
+            if ((!String.IsNullOrEmpty(fieldKey) && !String.IsNullOrEmpty(fieldValue))
+               && (index != LuceneField.Index.NO || storage != LuceneField.Store.NO))
+            {
+                doc.Add(CreateField(fieldKey, fieldValue, storage, index, vector, boost));
+            }
+        }
 
-      #endregion
-   }
+        #endregion
+
+        #region Properties
+
+        protected List<BaseDynamicField> DynamicFields
+        {
+            get
+            {
+                return _dynamicFields;
+            }
+        }
+
+        protected SafeDictionary<string, string> FieldCrawlers
+        {
+            get
+            {
+                return _fieldCrawlers;
+            }
+        }
+
+        protected SafeDictionary<string, bool> FieldFilter
+        {
+            get
+            {
+                return _fieldFilter;
+            }
+        }
+
+        protected SafeDictionary<string, SearchField> FieldTypes
+        {
+            get
+            {
+                return _fieldTypes;
+            }
+        }
+
+        protected bool HasFieldExcludes
+        {
+            get
+            {
+                return _hasFieldExcludes;
+            }
+            set
+            {
+                _hasFieldExcludes = value;
+            }
+        }
+
+        protected bool HasFieldIncludes
+        {
+            get
+            {
+                return _hasFieldIncludes;
+            }
+            set
+            {
+                _hasFieldIncludes = value;
+            }
+        }
+
+        #endregion
+    }
 }

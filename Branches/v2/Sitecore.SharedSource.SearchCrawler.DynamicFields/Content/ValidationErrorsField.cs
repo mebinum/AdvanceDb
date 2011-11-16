@@ -6,7 +6,7 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Validators;
 using Sitecore.Diagnostics;
 
-namespace Sitecore.SharedSource.SearchCrawler.DynamicFields
+namespace Sitecore.SharedSource.SearchCrawler.DynamicFields.Content
 {
    public static class EnumExtension
    {

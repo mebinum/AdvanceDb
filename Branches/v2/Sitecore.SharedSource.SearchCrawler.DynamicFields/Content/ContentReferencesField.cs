@@ -3,7 +3,7 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.SharedSource.Searcher.Utilities;
 
-namespace Sitecore.SharedSource.SearchCrawler.DynamicFields
+namespace Sitecore.SharedSource.SearchCrawler.DynamicFields.Content
 {
     public class ContentReferencesField : BaseDynamicField
     {
@@ -11,26 +11,18 @@ namespace Sitecore.SharedSource.SearchCrawler.DynamicFields
         {
             Assert.ArgumentNotNull(item, "item");
 
-            var references = from reference in Globals.LinkDatabase.GetReferences(item)
-                             select reference;
+            var referrers = Globals.LinkDatabase.GetReferrers(item).Select(r => r.GetSourceItem());
 
-            var allReferrers = references.Count();
+            var total = 0;
 
-            if (allReferrers <= 0) return SearchHelper.FormatNumber(0);
+            if (referrers.Count() > 0) total = referrers.Count(ValidReferrer);
 
-            var validReferrers = 0;
+            return SearchHelper.FormatNumber(total);
+        }
 
-            foreach (var reference in references)
-            {
-                var target = reference.GetTargetItem();
-
-                if (target != null && target.Paths.IsContentItem && !target.ID.Equals(item.ID))
-                {
-                    validReferrers++;
-                }
-            }
-
-            return SearchHelper.FormatNumber(validReferrers);
+        protected bool ValidReferrer(Item item)
+        {
+            return item != null && item.Paths.IsContentItem;
         }
     }
 }
