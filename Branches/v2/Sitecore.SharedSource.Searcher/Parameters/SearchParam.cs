@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Sitecore.Data;
 using Sitecore.Search;
@@ -11,18 +12,30 @@ namespace Sitecore.SharedSource.Searcher.Parameters
     public class SearchParam : ISearchParam
     {
         private string _database;
+        private string _language;
 
         public string RelatedIds { get; set; }
         public string TemplateIds { get; set; }
         public string LocationIds { get; set; }
         public string FullTextQuery { get; set; }
-        public string Language { get; set; }
+
+        public string Language
+        {
+            get
+            {
+                return _language.IsNullOrEmpty() ? Context.Language.Name : _language;
+            }
+
+            set { _language = value; }
+        }
+
         public string Database
         {
             get
             {
                 return _database.IsNullOrEmpty() ? SearchHelper.ContextDB.Name : _database;
             }
+
             set { _database = value; }
         }
 
@@ -36,8 +49,6 @@ namespace Sitecore.SharedSource.Searcher.Parameters
         public virtual BooleanQuery ProcessQuery(QueryOccurance occurance, Index index)
         {
             var innerQuery = new CombinedQuery();
-
-            ApplyLanguageClause(innerQuery, Language, occurance);
             ApplyFullTextClause(innerQuery, FullTextQuery, occurance);
             ApplyRelationFilter(innerQuery, RelatedIds, occurance);
             ApplyTemplateFilter(innerQuery, TemplateIds, occurance);
@@ -50,14 +61,19 @@ namespace Sitecore.SharedSource.Searcher.Parameters
             var translator = new QueryTranslator(index);
             var booleanQuery = translator.ConvertCombinedQuery(innerQuery);
 
+            ApplyLanguageClause(booleanQuery, Language, translator.GetOccur(occurance));
+
             return booleanQuery;
         }
 
-        protected void ApplyLanguageClause(CombinedQuery query, string language, QueryOccurance occurance)
+        protected void ApplyLanguageClause(BooleanQuery query, string language, BooleanClause.Occur occurance)
         {
             if (String.IsNullOrEmpty(language)) return;
 
-            query.Add(new FieldQuery(BuiltinFields.Language, language.ToLowerInvariant()), occurance);
+            var phraseQuery = new PhraseQuery();
+            phraseQuery.Add(new Term(BuiltinFields.Language, language.ToLowerInvariant()));
+
+            query.Add(phraseQuery, occurance);
         }
 
         protected void ApplyFullTextClause(CombinedQuery query, string searchText, QueryOccurance occurance)

@@ -1,6 +1,8 @@
 ﻿using System;
 using Sitecore.Data.Fields;
+using Sitecore.Data.Items;
 using Sitecore.Search.Crawlers.FieldCrawlers;
+using Sitecore.SharedSource.Searcher.Utilities;
 
 namespace Sitecore.SharedSource.SearchCrawler.FieldCrawlers
 {
@@ -9,21 +11,28 @@ namespace Sitecore.SharedSource.SearchCrawler.FieldCrawlers
     /// </summary>
     public class LookupFieldCrawler : FieldCrawlerBase
     {
-        public LookupFieldCrawler(Field field) : base(field){ }
+        public LookupFieldCrawler(Field field) : base(field) { }
 
         /// <summary>
-        /// Returns lookup field value as an item name instead of item ID.
+        /// Returns lookup field value as an item display name instead of item ID.
         /// </summary>
         /// <returns></returns>
         public override string GetValue()
         {
-           if (FieldTypeManager.GetField(_field) is LookupField)
-           {
-              var lookupField = new LookupField(_field);
-              var targetItem = lookupField.TargetItem;
-              return targetItem != null ? targetItem.DisplayName.ToLowerInvariant() : String.Empty;
-           }
-           return String.Empty;
+            var value = String.Empty;
+
+            if (FieldTypeManager.GetField(_field) is LookupField)
+            {
+                var lookupField = new LookupField(_field);
+                value = IdHelper.NormalizeGuid(lookupField.TargetID);
+            }
+            if (FieldTypeManager.GetField(_field) is ReferenceField)
+            {
+                var referenceField = new ReferenceField(_field);
+                value = IdHelper.NormalizeGuid(referenceField.TargetID);
+            }
+
+            return value;
         }
     }
 }

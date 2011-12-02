@@ -14,7 +14,6 @@ using Sitecore.Search.Crawlers;
 using Sitecore.SharedSource.SearchCrawler.DynamicFields;
 using Sitecore.SharedSource.SearchCrawler.FieldCrawlers;
 using Sitecore.SharedSource.Searcher.Utilities;
-using Sitecore.StringExtensions;
 using Sitecore.Xml;
 using System.Linq;
 using SCField = Sitecore.Data.Fields.Field;
@@ -43,7 +42,10 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
         protected override void IndexVersion(Item item, Item latestVersion, IndexUpdateContext context)
         {
             if (item.Template != null)
+            {
                 base.IndexVersion(item, latestVersion, context);
+            }
+
             else
             {
                 Log.Warn(string.Format("AdvancedDatabaseCrawler: Cannot update item version. Reason: Template is NULL in item '{0}'.", item.Paths.FullPath), this);
@@ -55,30 +57,33 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
             Assert.ArgumentNotNull(document, "document");
             Assert.ArgumentNotNull(item, "item");
 
-            //Log.Info("Processing item: {0}".FormatWith(item.Paths.FullPath), this);
+            var fields = FilteredFields(item);
 
-            foreach (var field in FilteredFields(item))
+            foreach (var field in fields)
             {
-                //Log.Info("Processing field: {0}, value {1}".FormatWith(field.Name, field.Value), this);
-
-                var value = ExtendedFieldCrawlerFactory.GetFieldCrawlerValue(field, FieldCrawlers);
-
-                if (string.IsNullOrEmpty(value)) continue;
-
-                var indexType = GetIndexType(field);
-                var storageType = GetStorageType(field);
-                var vectorType = GetVectorType(field);
-
-                value = IdHelper.ProcessGUIDs(value);
-                ProcessField(document, field.Key, value, storageType, indexType, vectorType);
-
-                if (indexType == LuceneField.Index.TOKENIZED)
-                {
-                    ProcessField(document, BuiltinFields.Content, value, LuceneField.Store.NO, LuceneField.Index.TOKENIZED);
-                }
+                ProcessField(field, document);
             }
 
             ProcessDynamicFields(document, item);
+        }
+
+        protected virtual void ProcessField(SCField field, Document document)
+        {
+            var value = ExtendedFieldCrawlerFactory.GetFieldCrawlerValue(field, FieldCrawlers);
+
+            if (string.IsNullOrEmpty(value)) return;
+
+            var indexType = GetIndexType(field);
+            var storageType = GetStorageType(field);
+            var vectorType = GetVectorType(field);
+
+            value = IdHelper.ProcessGUIDs(value);
+            ProcessField(document, field.Key, value, storageType, indexType, vectorType);
+
+            if (indexType == LuceneField.Index.TOKENIZED)
+            {
+                ProcessField(document, BuiltinFields.Content, value, LuceneField.Store.NO, LuceneField.Index.TOKENIZED);
+            }
         }
 
         #endregion
@@ -87,8 +92,6 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
 
         public virtual void AddDynamicFields(XmlNode configNode)
         {
-            //Log.Info("adding dynamic fields", this);
-
             Assert.ArgumentNotNull(configNode, "configNode");
             var type = XmlUtil.GetAttribute("type", configNode);
             var fieldName = XmlUtil.GetAttribute("name", configNode);
@@ -102,7 +105,6 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
 
             var dynamicField = field as BaseDynamicField;
 
-            //Log.Info("adding dynamic field: {0}".FormatWith(dynamicField.FieldKey), this);
             dynamicField.SetStorageType(storageType);
             dynamicField.SetIndexType(indexType);
             dynamicField.SetVectorType(vectorType);
@@ -188,11 +190,6 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
             return filteredFields.Where(f => !String.IsNullOrEmpty(f.Key)).ToList();
         }
 
-        //protected bool ShouldBeSplit(SCField field)
-        //{
-        //   return FieldTypeManager.GetField(field) is MultilistField;
-        //}
-
         protected LuceneField.Index GetIndexType(SCField field)
         {
             if (FieldTypes.ContainsKey(field.TypeKey))
@@ -231,8 +228,6 @@ namespace Sitecore.SharedSource.SearchCrawler.Crawlers
             foreach (var dynamicField in DynamicFields)
             {
                 var fieldValue = dynamicField.ResolveValue(item);
-
-                //Log.Info("Processing dynamic field: {0}, value {1}".FormatWith(dynamicField.FieldKey, fieldValue), this);
 
                 if (fieldValue != null)
                 {

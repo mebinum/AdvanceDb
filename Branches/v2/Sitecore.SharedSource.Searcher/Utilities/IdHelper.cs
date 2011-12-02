@@ -63,7 +63,7 @@ namespace Sitecore.SharedSource.Searcher.Utilities
          if (!String.IsNullOrEmpty(guid))
          {
             ShortID result;
-            if (ShortID.TryParse(guid, out result)) return result.ToString();
+            if (ShortID.TryParse(guid, out result)) return result.ToString().ToLowerInvariant();
          }
 
          return guid;
