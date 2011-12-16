@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sitecore.SharedSource.SearchDemo {
+namespace Sitecore.SharedSource.Apps.Scripts {
     
     
     public partial class RebuildDatabaseCrawlers {

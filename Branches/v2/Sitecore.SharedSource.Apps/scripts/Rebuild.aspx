@@ -1,5 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="True" CodeBehind="RebuildDatabaseCrawlers.aspx.cs"
-  Inherits="Sitecore.SharedSource.SearchDemo.RebuildDatabaseCrawlers" Debug="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="True" CodeBehind="Rebuild.aspx.cs"
+  Inherits="Sitecore.SharedSource.Apps.Scripts.RebuildDatabaseCrawlers" Debug="false" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

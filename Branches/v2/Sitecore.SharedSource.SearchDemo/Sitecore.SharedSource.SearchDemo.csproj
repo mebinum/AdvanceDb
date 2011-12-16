@@ -132,13 +132,6 @@
     <Compile Include="sitecore modules\Web\SearchDemo\DateRangeDemoPage.aspx.designer.cs">
       <DependentUpon>DateRangeDemoPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="sitecore modules\Web\SearchDemo\RebuildDatabaseCrawlers.aspx.cs">
-      <DependentUpon>RebuildDatabaseCrawlers.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="sitecore modules\Web\SearchDemo\RebuildDatabaseCrawlers.aspx.designer.cs">
-      <DependentUpon>RebuildDatabaseCrawlers.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sitecore.SharedSource.Searcher\Sitecore.SharedSource.Searcher.csproj">
@@ -158,7 +151,6 @@
     <Content Include="sitecore modules\Web\SearchDemo\MultiFieldDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\NumericRangeDemoPage.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\DateRangeDemoPage.aspx" />
-    <Content Include="sitecore modules\Web\SearchDemo\RebuildDatabaseCrawlers.aspx" />
     <Content Include="sitecore modules\Web\SearchDemo\TopNav.ascx" />
   </ItemGroup>
   <ItemGroup>

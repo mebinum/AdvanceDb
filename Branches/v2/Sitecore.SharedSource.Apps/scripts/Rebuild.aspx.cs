@@ -9,7 +9,7 @@ using Sitecore.Jobs;
 using Sitecore.Search;
 using Sitecore.Data.Indexing;
 
-namespace Sitecore.SharedSource.SearchDemo
+namespace Sitecore.SharedSource.Apps.Scripts
 {
     public partial class RebuildDatabaseCrawlers : System.Web.UI.Page
     {
