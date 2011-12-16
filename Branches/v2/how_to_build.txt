@@ -1,0 +1,5 @@
+1. Open deploy.txt
+2. Put the path to your Sitecore's installation webroot
+3. Build
+4. Launch http:\\<your_website>\sitecore modules\Web\SearchDemo\RebuildDatabaseCrawlers.aspx
+5. Rebuild the "advanced" index.
